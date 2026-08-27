@@ -1,8 +1,5 @@
 # SourcePilot
 
-> Cross-border Sourcing Copilot for SMB teams — 把自然语言采购需求变成 **constraint-valid、comparable、auditable** 的 Top-3 供应商 Shortlist，并把高风险商业动作保留给人工审批。
-
-> 当前仓库是 **7 天离线 MVP / AI PM Portfolio Project**。供应商数据为明确标记的 `mvp_seed` 合成数据；离线评测不是生产用户效果，Projected ROI 也不是 Production ROI。
 
 ## 一句话定位
 
@@ -219,17 +216,3 @@ python scripts/eval_sourcing.py
 python scripts/demo_supplier_search.py
 python scripts/demo_quotation_compare.py
 ```
-
-## 文档
-
-- [docs/PRD.md](docs/PRD.md) — 最终 PRD
-- [docs/architecture.md](docs/architecture.md) — DDD / Multi-Agent / 硬约束
-- [docs/model-selection.md](docs/model-selection.md) — LLM / Embedding / Reranker 选型
-- [docs/cost-analysis.md](docs/cost-analysis.md) — Projected ROI
-- [docs/evaluation-report.md](docs/evaluation-report.md) — Benchmark 详细报告
-- [docs/roadmap.md](docs/roadmap.md) — 产品路线图
-- [evaluation/results/benchmark_report.md](evaluation/results/benchmark_report.md) — 离线评测结果
-
-## License
-
-[MIT](LICENSE) (建议；如需 Apache-2.0 / 商业 License，请替换)
