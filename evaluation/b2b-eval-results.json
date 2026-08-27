@@ -1,0 +1,1045 @@
+{
+  "rfq": {
+    "case_count": 50,
+    "schema_valid_rate": 1.0,
+    "field_accuracy": {
+      "product": 1.0,
+      "quantity": 0.96,
+      "target_price": 1.0,
+      "currency": 1.0,
+      "material": 1.0,
+      "specifications": 1.0,
+      "customization": 1.0,
+      "required_certifications": 1.0,
+      "max_lead_time_days": 0.88,
+      "destination": 1.0,
+      "preferred_incoterm": 1.0,
+      "missing_required_fields": 1.0
+    },
+    "micro_field_accuracy": 0.9867,
+    "critical_constraint_recall": 0.9631,
+    "conflict_detection": {
+      "precision": 1.0,
+      "recall": 0.7,
+      "f1": 0.8235
+    },
+    "exact_case_accuracy_by_type": {
+      "complete": 0.95,
+      "conflict": 0.5,
+      "missing": 0.9333,
+      "no_match": 0.8
+    },
+    "sample_failures": [
+      {
+        "case_id": "RFQ-018",
+        "type": "complete",
+        "pred": {
+          "product": "electronic accessories",
+          "quantity": 3200,
+          "target_price": 3.4,
+          "currency": "USD",
+          "material": [],
+          "specifications": {
+            "voltages": [
+              "12V",
+              "24V"
+            ]
+          },
+          "customization": [
+            "custom firmware"
+          ],
+          "required_certifications": [
+            "CE",
+            "ROHS"
+          ],
+          "max_lead_time_days": null,
+          "destination": "UK",
+          "preferred_incoterm": "DDP",
+          "missing_required_fields": [],
+          "conflict_fields": [],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "electronic accessories",
+          "quantity": 3200,
+          "target_price": 3.4,
+          "currency": "USD",
+          "material": [],
+          "specifications": {
+            "voltages": [
+              "12V",
+              "24V"
+            ]
+          },
+          "customization": [
+            "custom firmware"
+          ],
+          "required_certifications": [
+            "CE",
+            "ROHS"
+          ],
+          "max_lead_time_days": 30,
+          "destination": "UK",
+          "preferred_incoterm": "DDP",
+          "missing_required_fields": [],
+          "conflict_fields": []
+        }
+      },
+      {
+        "case_id": "RFQ-024",
+        "type": "missing",
+        "pred": {
+          "product": null,
+          "quantity": 2000,
+          "target_price": 6.8,
+          "currency": "USD",
+          "material": [],
+          "specifications": {
+            "luggage_strap": true
+          },
+          "customization": [
+            "custom logo",
+            "luggage strap"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [
+            "product"
+          ],
+          "conflict_fields": [],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": null,
+          "quantity": 2000,
+          "target_price": 6.8,
+          "currency": "USD",
+          "material": [],
+          "specifications": {
+            "luggage_strap": true
+          },
+          "customization": [
+            "custom logo",
+            "luggage strap"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": 30,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [
+            "product"
+          ],
+          "conflict_fields": []
+        }
+      },
+      {
+        "case_id": "RFQ-037",
+        "type": "conflict",
+        "pred": {
+          "product": "nylon backpack",
+          "quantity": 5000,
+          "target_price": 7.0,
+          "currency": "USD",
+          "material": [
+            "nylon"
+          ],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "nylon backpack",
+          "quantity": 3000,
+          "target_price": 7.0,
+          "currency": "USD",
+          "material": [
+            "nylon"
+          ],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ]
+        }
+      },
+      {
+        "case_id": "RFQ-039",
+        "type": "conflict",
+        "pred": {
+          "product": "vacuum flask",
+          "quantity": 5000,
+          "target_price": 3.8,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "laser logo"
+          ],
+          "required_certifications": [
+            "LFGB"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "target_price"
+          ],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "vacuum flask",
+          "quantity": 5000,
+          "target_price": 3.8,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "laser logo"
+          ],
+          "required_certifications": [
+            "LFGB"
+          ],
+          "max_lead_time_days": 30,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "target_price"
+          ]
+        }
+      },
+      {
+        "case_id": "RFQ-040",
+        "type": "conflict",
+        "pred": {
+          "product": "nylon backpack",
+          "quantity": 2000,
+          "target_price": null,
+          "currency": "USD",
+          "material": [
+            "nylon"
+          ],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "nylon backpack",
+          "quantity": 2000,
+          "target_price": null,
+          "currency": "USD",
+          "material": [
+            "nylon"
+          ],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": 35,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ]
+        }
+      },
+      {
+        "case_id": "RFQ-043",
+        "type": "conflict",
+        "pred": {
+          "product": "nylon backpack",
+          "quantity": 2200,
+          "target_price": null,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": 40,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "nylon backpack",
+          "quantity": 1800,
+          "target_price": null,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [
+            "REACH"
+          ],
+          "max_lead_time_days": 40,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "quantity"
+          ]
+        }
+      },
+      {
+        "case_id": "RFQ-045",
+        "type": "conflict",
+        "pred": {
+          "product": "vacuum flask",
+          "quantity": 6000,
+          "target_price": 3.7,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [],
+          "required_certifications": [
+            "LFGB"
+          ],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "target_price"
+          ],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "vacuum flask",
+          "quantity": 6000,
+          "target_price": 3.7,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [],
+          "required_certifications": [
+            "LFGB"
+          ],
+          "max_lead_time_days": 30,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [
+            "target_price"
+          ]
+        }
+      },
+      {
+        "case_id": "RFQ-048",
+        "type": "no_match",
+        "pred": {
+          "product": "yoga mat",
+          "quantity": 2000,
+          "target_price": 5.0,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [],
+          "max_lead_time_days": null,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": [],
+          "parser_strategy": "regex_fallback"
+        },
+        "gold": {
+          "product": "yoga mat",
+          "quantity": 2000,
+          "target_price": 5.0,
+          "currency": "USD",
+          "material": [],
+          "specifications": {},
+          "customization": [
+            "custom logo"
+          ],
+          "required_certifications": [],
+          "max_lead_time_days": 30,
+          "destination": null,
+          "preferred_incoterm": null,
+          "missing_required_fields": [],
+          "conflict_fields": []
+        }
+      }
+    ],
+    "parser_strategy": "dependency-free regex fallback; production path remains LLM structured extraction + validation"
+  },
+  "quotation": {
+    "case_count": 35,
+    "schema_valid_rate": 1.0,
+    "field_accuracy": {
+      "unit_price": 0.8857,
+      "currency": 1.0,
+      "incoterm": 1.0,
+      "logo_fee_per_unit": 0.9714,
+      "packaging_fee_per_unit": 0.9714,
+      "fixed_fee": 1.0,
+      "lead_time_min_days": 0.9714,
+      "lead_time_max_days": 0.9714,
+      "certifications_confirmed": 1.0
+    },
+    "micro_field_accuracy": 0.9746,
+    "cost_calculation_accuracy": 1.0,
+    "cost_calculation_case_count": 19,
+    "sample_failures": [
+      {
+        "case_id": "Q-031",
+        "pred": {
+          "unit_price": 3.6,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": 0.1,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": 25,
+          "lead_time_max_days": 25,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        },
+        "gold": {
+          "unit_price": null,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": 0.1,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": 25,
+          "lead_time_max_days": 25,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        }
+      },
+      {
+        "case_id": "Q-032",
+        "pred": {
+          "unit_price": 3.7,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": null,
+          "packaging_fee_per_unit": 0.15,
+          "fixed_fee": 60.0,
+          "lead_time_min_days": 28,
+          "lead_time_max_days": 28,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        },
+        "gold": {
+          "unit_price": null,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": null,
+          "packaging_fee_per_unit": 0.15,
+          "fixed_fee": 60.0,
+          "lead_time_min_days": 28,
+          "lead_time_max_days": 28,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        }
+      },
+      {
+        "case_id": "Q-033",
+        "pred": {
+          "unit_price": 3.0,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": 0.0,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": 26,
+          "lead_time_max_days": 26,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        },
+        "gold": {
+          "unit_price": 3.65,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": 0.1,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": 26,
+          "lead_time_max_days": 26,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        }
+      },
+      {
+        "case_id": "Q-034",
+        "pred": {
+          "unit_price": 365.0,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": null,
+          "packaging_fee_per_unit": 12.0,
+          "fixed_fee": null,
+          "lead_time_min_days": 30,
+          "lead_time_max_days": 30,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        },
+        "gold": {
+          "unit_price": 3.65,
+          "currency": "USD",
+          "incoterm": "FOB",
+          "logo_fee_per_unit": null,
+          "packaging_fee_per_unit": 0.12,
+          "fixed_fee": null,
+          "lead_time_min_days": 30,
+          "lead_time_max_days": 30,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        }
+      },
+      {
+        "case_id": "Q-035",
+        "pred": {
+          "unit_price": 3.68,
+          "currency": "USD",
+          "incoterm": "CIF",
+          "logo_fee_per_unit": 0.09,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": null,
+          "lead_time_max_days": null,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        },
+        "gold": {
+          "unit_price": 3.68,
+          "currency": "USD",
+          "incoterm": "CIF",
+          "logo_fee_per_unit": 0.09,
+          "packaging_fee_per_unit": null,
+          "fixed_fee": null,
+          "lead_time_min_days": 28,
+          "lead_time_max_days": 28,
+          "certifications_confirmed": [
+            "LFGB"
+          ]
+        }
+      }
+    ],
+    "parser_strategy": "conservative regex fallback for offline eval; unknown fields remain null"
+  },
+  "supplier_search": {
+    "case_count": 30,
+    "recall_at_10": 0.9667,
+    "recall_at_20": 1.0,
+    "ndcg_at_10": 0.7158,
+    "hard_constraint_satisfaction_rate": 1.0,
+    "qualified_count_exact_rate": 1.0,
+    "surfaced_filter_reason_exact_rate": 1.0,
+    "latency_ms": {
+      "p50": 4.87,
+      "p95": 5.723,
+      "mean": 5.043
+    },
+    "strategy": "keyword_2gram fallback (embedding/reranker unavailable in current sandbox)",
+    "annotation_note": "relevant supplier order is synthetic rubric-derived, not human supplier judgment",
+    "per_case": [
+      {
+        "case_id": "S-001",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-002",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7039,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-003",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7039,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-004",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-005",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.8597,
+        "qualified_reported": 2,
+        "qualified_gold": 2,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-006",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-007",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7039,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-008",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7039,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-009",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-010",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7591,
+        "qualified_reported": 9,
+        "qualified_gold": 9,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-011",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-012",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-013",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-014",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-015",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-016",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-017",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-018",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-019",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-020",
+        "recall10": 1.0,
+        "recall20": 1.0,
+        "ndcg10": 0.7629,
+        "qualified_reported": 6,
+        "qualified_gold": 6,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-021",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-022",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-023",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6582,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-024",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-025",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6582,
+        "qualified_reported": 11,
+        "qualified_gold": 11,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-026",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-027",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-028",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6582,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-029",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.6354,
+        "qualified_reported": 12,
+        "qualified_gold": 12,
+        "recall_strategy": "keyword_2gram"
+      },
+      {
+        "case_id": "S-030",
+        "recall10": 0.9,
+        "recall20": 1.0,
+        "ndcg10": 0.5726,
+        "qualified_reported": 13,
+        "qualified_gold": 13,
+        "recall_strategy": "keyword_2gram"
+      }
+    ]
+  },
+  "decision": {
+    "case_count": 10,
+    "top3_membership_agreement": 0.9,
+    "ranking_pairwise_agreement": 0.7333,
+    "offline_task_completion_rate": 1.0,
+    "latency_ms": {
+      "p50": 0.117,
+      "p95": 0.218
+    },
+    "annotation_note": "gold is an independent synthetic rubric (45% cost/30% reliability/20% lead/5% MOQ), not human procurement labels",
+    "per_case": [
+      {
+        "case_id": "D-01",
+        "predicted_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-021"
+        ],
+        "gold_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-021"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 1.0
+      },
+      {
+        "case_id": "D-02",
+        "predicted_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-021"
+        ],
+        "gold_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-031"
+        ],
+        "membership": 0.6667,
+        "ranking_agreement": 0.3333
+      },
+      {
+        "case_id": "D-03",
+        "predicted_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-021"
+        ],
+        "gold_top3": [
+          "SUP-VF-051",
+          "SUP-VF-011",
+          "SUP-VF-021"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 1.0
+      },
+      {
+        "case_id": "D-04",
+        "predicted_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "gold_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 1.0
+      },
+      {
+        "case_id": "D-05",
+        "predicted_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "gold_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 1.0
+      },
+      {
+        "case_id": "D-06",
+        "predicted_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "gold_top3": [
+          "SUP-BP-051",
+          "SUP-BP-011",
+          "SUP-BP-021"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 1.0
+      },
+      {
+        "case_id": "D-07",
+        "predicted_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-021"
+        ],
+        "gold_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-031"
+        ],
+        "membership": 0.6667,
+        "ranking_agreement": 0.3333
+      },
+      {
+        "case_id": "D-08",
+        "predicted_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-021"
+        ],
+        "gold_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-041"
+        ],
+        "membership": 0.6667,
+        "ranking_agreement": 0.3333
+      },
+      {
+        "case_id": "D-09",
+        "predicted_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-021"
+        ],
+        "gold_top3": [
+          "SUP-EL-051",
+          "SUP-EL-021",
+          "SUP-EL-011"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 0.6667
+      },
+      {
+        "case_id": "D-10",
+        "predicted_top3": [
+          "SUP-EL-051",
+          "SUP-EL-011",
+          "SUP-EL-021"
+        ],
+        "gold_top3": [
+          "SUP-EL-051",
+          "SUP-EL-021",
+          "SUP-EL-011"
+        ],
+        "membership": 1.0,
+        "ranking_agreement": 0.6667
+      }
+    ]
+  },
+  "unmeasured": {
+    "live_agent_metrics": "blocked by missing AgentScope/LLM runtime in current sandbox",
+    "manual_ttqs": "requires a human participant and stopwatch; intentionally not fabricated",
+    "token_cost_per_task": "requires live model gateway usage records",
+    "production_roi": "not applicable to offline MVP"
+  }
+}
