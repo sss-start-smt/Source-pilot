@@ -6,23 +6,16 @@
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 import pytest
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.domain.buyer.preference import BuyerPreference
-from app.domain.catalog.money import Money
-from app.domain.order.address import Address
-from app.domain.order.order import Order, OrderStatus
-from app.domain.order.order_line import OrderLine
 from app.domain.session.ports.conversation_store import (
     ConversationEventRecord,
     ConversationTurn,
 )
 from app.infrastructure.persistence.sql.repositories import (
     SqlConversationStore,
-    SqlOrderRepository,
     SqlPreferenceStore,
     SqlSessionStore,
     bootstrap_schema,
@@ -38,31 +31,6 @@ async def engine():
     await bootstrap_schema(eng)
     yield eng
     await eng.dispose()
-
-
-def _order(order_id: str = "GBX-000001") -> Order:
-    return Order.place(
-        order_id=order_id,
-        buyer_id="buyer-001",
-        shipping_address=Address(
-            recipient_name="Pan",
-            country="US",
-            state="CA",
-            city="San Jose",
-            address_line="1 Market St",
-            postal_code="95110",
-            phone="+1-555-0100",
-        ),
-        lines=[
-            OrderLine(
-                product_id="P1008",
-                sku_id="P1008-S1",
-                title="LumenGo 便携露营灯 可充电",
-                unit_price=Money(amount_in_minor_units=8900, currency="CNY"),
-                quantity=2,
-            ),
-        ],
-    )
 
 
 class TestEngineSelection:
@@ -147,7 +115,7 @@ class TestConversationStore:
         await store.append_events(
             [
                 ConversationEventRecord(
-                    session_id="s1", type="tool.result", payload={"tool": "product_search_tool"},
+                    session_id="s1", type="tool.result", payload={"tool": "supplier_search_tool"},
                 ),
             ],
         )
@@ -163,41 +131,6 @@ class TestConversationStore:
 
     async def test_empty_events_is_noop(self, engine):
         await SqlConversationStore(engine).append_events([])
-
-
-class TestOrderRepository:
-    async def test_order_roundtrip_preserves_money_and_status(self, engine):
-        repo = SqlOrderRepository(engine)
-        await repo.save(_order())
-        restored = await repo.find_by_id("GBX-000001")
-        assert restored is not None
-        assert restored.status is OrderStatus.CONFIRMED
-        # 金额按最小单位存取，不能有浮点漂移
-        assert restored.total_amount().amount_in_minor_units == 17800
-        assert restored.total_amount().currency == "CNY"
-        assert restored.lines[0].sku_id == "P1008-S1"
-        assert restored.shipping_address.country == "US"
-
-    async def test_cancel_then_save_overwrites_status(self, engine):
-        repo = SqlOrderRepository(engine)
-        order = _order()
-        await repo.save(order)
-        order.cancel("买家改主意了")
-        await repo.save(order)
-        restored = await repo.find_by_id("GBX-000001")
-        assert restored.status is OrderStatus.CANCELLED
-        assert restored.cancel_reason == "买家改主意了"
-        # 订单行整体重写，不能出现重复行
-        assert len(restored.lines) == 1
-
-    async def test_missing_order_returns_none(self, engine):
-        assert await SqlOrderRepository(engine).find_by_id("GBX-999999") is None
-
-    async def test_next_order_id_increments(self, engine):
-        repo = SqlOrderRepository(engine)
-        assert await repo.next_order_id() == "GBX-000001"
-        await repo.save(_order("GBX-000001"))
-        assert await repo.next_order_id() == "GBX-000002"
 
 
 class TestPreferenceStore:

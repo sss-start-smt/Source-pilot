@@ -38,14 +38,14 @@ export default function App() {
 
     const connect = () => {
       if (closed) return;
-      const ws = new WebSocket(`${WS_BASE}/commerce/events`);
+      const ws = new WebSocket(`${WS_BASE}/procurement/events`);
       wsRef.current = ws;
       ws.onopen = () => {
         if (closed) {
           ws.close();
           return;
         }
-        ws.send(JSON.stringify({ shopping_session_id: sessionId }));
+        ws.send(JSON.stringify({ procurement_session_id: sessionId }));
         setConnected(true);
       };
       ws.onclose = () => {
@@ -92,11 +92,11 @@ export default function App() {
     setBusy(true);
     setTurns((prev) => [...prev, { role: "buyer", text: query }]);
     try {
-      await fetch(`${API_BASE}/commerce/intents`, {
+      await fetch(`${API_BASE}/procurement/intents`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          shopping_session_id: sessionId,
+          procurement_session_id: sessionId,
           buyer_id: buyerId,
           locale: "zh-CN",
           currency: "USD",
@@ -113,7 +113,8 @@ export default function App() {
   return (
     <div className="layout">
       <header>
-        <h1>Cross-border Sourcing Copilot</h1>
+        <h1>寻策 SourcePilot</h1>
+        <p className="product-subtitle">AI Sourcing &amp; Supplier Decision Copilot</p>
         <div className="meta">
           <span>会话 {sessionId}</span>
           <span>采购账号 {buyerId}</span>

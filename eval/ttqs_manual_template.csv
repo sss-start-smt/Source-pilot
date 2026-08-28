@@ -1,0 +1,11 @@
+﻿task_id,case_id,case_type,start_time,end_time,duration_seconds,qualified_shortlist_count,manual_corrections,final_top3,operator,notes
+TTQS-01,RFQ-017,complete,,,,,,,,
+TTQS-02,RFQ-005,complete,,,,,,,,
+TTQS-03,RFQ-019,complete,,,,,,,,
+TTQS-04,RFQ-020,complete,,,,,,,,
+TTQS-05,RFQ-008,complete,,,,,,,,
+TTQS-06,RFQ-014,complete,,,,,,,,
+TTQS-07,RFQ-001,complete,,,,,,,,
+TTQS-08,RFQ-050,no_match,,,,,,,,
+TTQS-09,RFQ-013,complete,,,,,,,,
+TTQS-10,RFQ-002,complete,,,,,,,,

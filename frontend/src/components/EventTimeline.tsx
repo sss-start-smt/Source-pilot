@@ -28,7 +28,6 @@ function summarize(event: TradeEvent): string {
         const strategy = p.recall_strategy ? ` / ${p.recall_strategy}` : "";
         return `${p.tool} 命中 ${p.hit_count} 条${strategy}`;
       }
-      if (p.order) return `${p.tool} → ${p.order.order_id} ${p.order.status}`;
       if (p.saved) return `${p.tool} 已记住：${p.saved}`;
       return String(p.tool ?? "");
     }

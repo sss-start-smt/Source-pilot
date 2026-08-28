@@ -9,7 +9,7 @@ from app.application.harness.drift_detector import (
 
 class TestExtractKeywords:
     def test_chinese_bigrams(self):
-        assert "旅行" in extract_keywords("旅行三件套")
+        assert "不锈" in extract_keywords("不锈钢保温杯")
 
     def test_ascii_lowercased(self):
         assert "nomadica" in extract_keywords("Nomadica bag")
@@ -21,32 +21,32 @@ class TestExtractKeywords:
 class TestDriftIntervalAndIsolation:
     async def test_not_due_before_interval(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
-        det.observe_action("s1", "搜索 旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
+        det.observe_action("s1", "搜索 不锈钢保温杯")
         assert det.due("s1") is False
         assert (await det.check("s1")).drifted is False
 
     async def test_due_on_interval(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套 抗造")
+            det.observe_action("s1", "搜索 不锈钢保温杯 抗造")
         assert det.due("s1") is True
 
     async def test_sessions_isolated(self):
         """文档示例用模块级 _round_counter 会串台，这里必须按会话隔离。"""
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
-        det.start_turn("s2", "登机箱")
+        det.start_turn("s1", "不锈钢保温杯")
+        det.start_turn("s2", "尼龙背包")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套")
+            det.observe_action("s1", "搜索 不锈钢保温杯")
         assert det.due("s1") is True
         assert det.due("s2") is False, "s2 不应继承 s1 的轮次计数"
-        assert det.original_query("s2") == "登机箱"
+        assert det.original_query("s2") == "尼龙背包"
 
     def test_reset_clears_session(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
         det.observe_action("s1", "x")
         det.reset("s1")
         assert det.original_query("s1") == ""
@@ -55,9 +55,9 @@ class TestDriftIntervalAndIsolation:
 class TestDriftSignals:
     async def test_goal_forgotten(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套 抗造 无塑料")
+        det.start_turn("s1", "不锈钢保温杯 抗造 无塑料")
         for _ in range(3):
-            det.observe_action("s1", "搜索 露营帐篷 睡袋 防潮垫")
+            det.observe_action("s1", "搜索 电子配件 USB-C 固件")
 
         report = await det.check("s1")
         assert report.drifted is True
@@ -65,47 +65,47 @@ class TestDriftSignals:
 
     async def test_on_target_is_not_drift(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套 抗造 无塑料")
+        det.start_turn("s1", "不锈钢保温杯 抗造 无塑料")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套 抗造 无塑料 帆布")
+            det.observe_action("s1", "搜索 不锈钢保温杯 304 LFGB 激光Logo")
 
         report = await det.check("s1")
         assert report.drifted is False, "紧扣原始需求不应被判漂移"
 
     async def test_exploration_divergence(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套", result_empty=True)
+            det.observe_action("s1", "搜索 不锈钢保温杯", result_empty=True)
 
         report = await det.check("s1")
         assert any("无候选" in r for r in report.reasons)
 
     async def test_empty_streak_resets_on_hit(self):
         det = DriftDetector(check_interval=3)
-        det.start_turn("s1", "旅行三件套")
-        det.observe_action("s1", "搜索 旅行三件套", result_empty=True)
-        det.observe_action("s1", "搜索 旅行三件套", result_empty=True)
-        det.observe_action("s1", "搜索 旅行三件套", result_empty=False)
+        det.start_turn("s1", "不锈钢保温杯")
+        det.observe_action("s1", "搜索 不锈钢保温杯", result_empty=True)
+        det.observe_action("s1", "搜索 不锈钢保温杯", result_empty=True)
+        det.observe_action("s1", "搜索 不锈钢保温杯", result_empty=False)
 
         report = await det.check("s1")
         assert not any("无候选" in r for r in report.reasons)
 
     async def test_preference_blacklist_hit(self):
         det = DriftDetector(check_interval=1)
-        det.start_turn("s1", "旅行三件套")
-        det.observe_action("s1", "推荐 旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
+        det.observe_action("s1", "推荐 不锈钢保温杯")
 
         report = await det.check("s1", blacklist_hits=["塑料"])
         assert any("黑名单" in r for r in report.reasons)
 
     async def test_cost_spike(self):
         det = DriftDetector(check_interval=6)
-        det.start_turn("s1", "旅行三件套")
+        det.start_turn("s1", "不锈钢保温杯")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套", tokens=100)
+            det.observe_action("s1", "搜索 不锈钢保温杯", tokens=100)
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套", tokens=500)
+            det.observe_action("s1", "搜索 不锈钢保温杯", tokens=500)
 
         report = await det.check("s1")
         assert any("两倍" in r for r in report.reasons)
@@ -120,9 +120,9 @@ class TestLlmJudge:
             return "严重偏离"
 
         det = DriftDetector(check_interval=3, judge=judge)
-        det.start_turn("s1", "旅行三件套 抗造")
+        det.start_turn("s1", "不锈钢保温杯 抗造")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套 抗造")
+            det.observe_action("s1", "搜索 不锈钢保温杯 抗造")
 
         report = await det.check("s1")
         assert len(calls) == 1
@@ -138,9 +138,9 @@ class TestLlmJudge:
             return "正常"
 
         det = DriftDetector(check_interval=3, judge=judge)
-        det.start_turn("s1", "旅行三件套 抗造 无塑料")
+        det.start_turn("s1", "不锈钢保温杯 抗造 无塑料")
         for _ in range(3):
-            det.observe_action("s1", "搜索 露营帐篷")
+            det.observe_action("s1", "搜索 电子配件")
 
         await det.check("s1")
         assert calls == [], "已有计算信号时不应再调模型"
@@ -150,9 +150,9 @@ class TestLlmJudge:
             raise RuntimeError("模型限流")
 
         det = DriftDetector(check_interval=3, judge=judge)
-        det.start_turn("s1", "旅行三件套 抗造")
+        det.start_turn("s1", "不锈钢保温杯 抗造")
         for _ in range(3):
-            det.observe_action("s1", "搜索 旅行三件套 抗造")
+            det.observe_action("s1", "搜索 不锈钢保温杯 抗造")
 
         report = await det.check("s1")
         assert report.drifted is False, "终审失败不能把正常流程判成漂移"
@@ -161,6 +161,6 @@ class TestLlmJudge:
 class TestDriftReportHint:
     def test_hint_mentions_original_query(self):
         report = DriftReport(reasons=["连续 3 次检索无候选"])
-        hint = report.hint("旅行三件套")
-        assert "旅行三件套" in hint
+        hint = report.hint("不锈钢保温杯")
+        assert "不锈钢保温杯" in hint
         assert "连续 3 次检索无候选" in hint

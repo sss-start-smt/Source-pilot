@@ -1,7 +1,7 @@
 [project]
 name = "sourcepilot"
 version = "0.1.0"
-description = "SourcePilot 跨境电商智能寻源与采购决策 Copilot：DDD 洋葱架构 + Multi-Agent + 确定性硬约束筛选"
+description = "SourcePilot: AI sourcing and supplier decision copilot with deterministic procurement controls"
 readme = "README.md"
 # AgentScope 2.x 要求 Python >= 3.11
 requires-python = ">=3.11,<3.14"

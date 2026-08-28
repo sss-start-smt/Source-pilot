@@ -1,121 +1,54 @@
-# SourcePilot — Architecture (DDD 洋葱 + Multi-Agent)
+# 系统架构
 
-> 本文档是 README 引用的 `architecture.md`。详细产品 brief 见 [b2b-product-brief.md](b2b-product-brief.md)，
-> 数据 schema 见 [b2b-schemas.md](b2b-schemas.md)，执行节奏见 [B2B_Sourcing_Agent_7Day_Execution_Plan.md](B2B_Sourcing_Agent_7Day_Execution_Plan.md)。
+## 架构原则
 
-## 1. 分层
+SourcePilot 采用 1+2 Multi-Agent 与确定性业务引擎的混合架构：
 
-```text
-                ┌──────────────────────────┐
-                │  presentation (FastAPI)  │
-                └────────────┬─────────────┘
-                             │
-        ┌────────────────────┴────────────────────┐
-        │            application (用例/工具/Agent) │
-        │  usecases · tools · agents · prompts     │
-        │  harness (assertions / loop / drift)     │
-        └────────────────────┬────────────────────┘
-                             │
-        ┌────────────────────┴────────────────────┐
-        │              domain (纯领域模型)         │
-        │  procurement · supplier · quotation     │
-        │  catalog · order · buyer · session ...   │
-        └────────────────────┬────────────────────┘
-                             │
-        ┌────────────────────┴────────────────────┐
-        │     infrastructure (外部世界 / 副作用)   │
-        │  LLM · Qdrant · Redis · Persistence     │
-        │  Reranker · Tracing · Resilience        │
-        └────────────────────────────────────────┘
+- Agent 负责语义理解、任务规划、并发协作和解释；
+- Python 负责 Schema、Hard Constraint、成本复算和排序；
+- 采购人员负责所有高风险外部动作。
+
+```mermaid
+flowchart TB
+    UI["React UI / FastAPI"] --> O["Procurement Supervisor"]
+    O --> S["Sourcing Agent"]
+    O --> Q["Quote Agent"]
+    O --> R["RFQ Parser"]
+    S --> RET["Supplier Retrieval"]
+    RET --> H["Hard Constraint Engine"]
+    Q --> N["Quotation Normalizer"]
+    N --> C["Cost & Ranking Engine"]
+    H --> C
+    C --> O
+    O --> MEM["Preference Memory"]
+    O --> OBS["Events / Tracing / Guards"]
 ```
 
-依赖方向：**外 → 内**。Domain 不知道 LLM / DB；Application 只通过 Port 与 Infrastructure 交互。
+## Agent 职责
 
-## 2. Agent 拓扑
+| 单元 | 职责 | 禁止事项 |
+|---|---|---|
+| Procurement Supervisor | 意图识别、计划、路由、并行、偏好注入、汇总 | 编造事实、覆盖规则、绕过确认 |
+| Sourcing Agent | 结构化检索条件、调用召回、解释 Qualified/Filtered | 将过滤候选重新推荐 |
+| Quote Agent | 报价抽取、标准化、调用成本与比较工具 | 猜测未知字段、自动对外发送 |
 
-```text
-ProcurementConcierge (Supervisor)
-├── supplier_search_tool            # 简单单品类直接调
-├── remember / forget preference    # 长期偏好写路径
-└── task_dispatch (按需)
-    ├── SourcingAgent
-    └── QuoteAgent
-```
+RFQ Parser、Hard Constraint、Cost Calculator、Ranking 和 Decision Explanation 均为能力模块，不独立 Agent 化。
 
-Multi-Agent 是**按条件启用**的：一次简单寻源直接调 supplier_search_tool；多个独立品类 / 大段报价 / 长上下文时才 dispatch 子 Agent。
+## 确定性边界
 
-## 3. Hard Gate vs Soft Rank
+Hard Gate 检查：
 
-```text
-LLM / Agent
-├── 理解 NL 采购需求
-├── 抽取 RFQ / 报价字段
-├── 追问缺失信息
-├── 规划 / 调度工具
-└── 解释推荐理由
+- `supplier.moq <= rfq.quantity`
+- `unit_price <= target_price`
+- 必需认证可验证
+- `lead_time_days <= max_lead_time_days`
+- 所需定制能力可验证
 
-Deterministic Python
-├── Schema validation
-├── MOQ / 价格 / 认证 / 交期 / 定制 Hard Gate
-├── Effective Unit Cost
-├── Supplier numeric score
-└── Qualified Top-3 校验
-```
+未知字段显式标记，不默认通过。Soft Rank 仅作用于已经通过 Hard Gate 的候选。
 
-**Hard Gate 在 Soft Rank 之前执行**。语义高相关度不能把硬约束失败的供应商重新带回 Qualified Shortlist。
+## 上下文与并发
 
-## 4. 顶层 facade（app/agents, app/tools, app/models, app/config）
-
-为了对外暴露稳定的入口（README / 外部脚本 / 集成测试 / OpenAPI 生成器），
-仓库在 `app/` 根下提供 4 个**薄门面**目录：
-
-| 门面目录 | 对应实现 |
-|---|---|
-| `app/agents/` | `app.application.agents.*` |
-| `app/tools/` | `app.application.usecases.*` / `app.application.tools.*` |
-| `app/models/schemas.py` | `app.domain.*` 全部数据模型 |
-| `app/config/settings.py` | `app.infrastructure.settings` |
-
-DDD 内部分层（domain / application / infrastructure / presentation）保持不变。
-
-## 5. 数据流（单次寻源）
-
-```text
-user message
-   │
-   ▼
-MainAgentOrchestrator
-   │
-   ▼
-supplier_search_tool (FunctionTool)
-   │
-   ▼
-SupplierSearchUseCase
-   ├── Retrieval: Embedding → Qdrant → HTTP Reranker
-   │      (fallback) keyword_2gram
-   ├── Hard Gate: MOQ / Price / Cert / Lead / Customization
-   └── Soft Rank: requirement_match 35% / effective_cost 25% /
-                  lead_time 15% / reliability 15% / moq_flex 10%
-   │
-   ▼
-Supplier Cards → 事件流 (token.delta / plan.update / final.result)
-```
-
-## 6. 可选外部依赖（全部按"空即降级"设计）
-
-- LLM: OpenAI-compatible（qwen3-max / 其它）
-- Embedding: OpenAI-compatible（text-embedding-v4 / 其它）
-- Vector DB: Qdrant（缺省本地嵌入模式）
-- Reranker: HTTP Reranker
-- Cache / Queue / Backplane: Redis Stream
-- Persistence: SQLite / JSON 文件
-- Tracing: OTLP
-
-## 7. 护栏（Harness）
-
-- 循环检测（LoopDetector）
-- 漂移检测（DriftDetector, 默认关）
-- 单步断言（SequencingTracker）
-- L3 内容过滤 + 输出 Guard
-- Circuit Breaker + Tool Timeout
-- Token 预算 + 网关限流
+- 每个会话持有独立 Main Agent State；
+- 专家 Agent 每次派发创建独立上下文，只回传最终结论；
+- 多个独立品类或多份报价可并行；
+- 简单单步任务直接调用工具，减少 Token、时延和上下文污染。

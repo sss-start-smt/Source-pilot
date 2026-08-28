@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import asyncio
 
+import httpx
 import pytest
 from agentscope.credential import OpenAICredential
 
-from app.infrastructure.context import ShoppingContext, ShoppingContextSnapshot
+from app.infrastructure.context import ProcurementContext, ProcurementContextSnapshot
 from app.infrastructure.eventbus import TradeEventBus
 from app.infrastructure.llm import ThrottledChatModel
 from app.infrastructure.throttle import GatewayThrottle
@@ -62,6 +63,7 @@ def _build(behaviors, *, throttle=None, fallback=None, retries=0, bus=None) -> S
         behaviors,
         credential=_CREDENTIAL,
         model="primary-model",
+        client_kwargs={"http_client": httpx.AsyncClient(trust_env=False)},
         throttle=throttle or GatewayThrottle(max_concurrency=1, min_interval_seconds=0),
         fallback=fallback,
         max_transient_retries=retries,
@@ -140,16 +142,16 @@ class TestRetryAndFallback:
             bus=bus,
         )
 
-        # 事件需按会话路由，模型层从 ShoppingContext 取当前会话
-        token = ShoppingContext.set(
-            ShoppingContextSnapshot(
-                shopping_session_id="s-fallback", buyer_id="b", locale="zh-CN", currency="CNY",
+        # 事件需按会话路由，模型层从 ProcurementContext 取当前会话
+        token = ProcurementContext.set(
+            ProcurementContextSnapshot(
+                procurement_session_id="s-fallback", buyer_id="b", locale="zh-CN", currency="CNY",
             ),
         )
         try:
             assert await model([]) == "fallback-reply"
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert model.upstream_calls == 3, "主模型应先把重试次数用尽"
         assert fallback.calls == 1

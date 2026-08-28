@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Offline Day-5 product smoke harness for the three frozen demo cases.
+"""Offline MVP smoke harness for the three frozen sourcing cases.
 
 Because the sandbox may not have AgentScope/LLM credentials, this harness starts
 from the natural-language case fixture plus its frozen structured RFQ extraction,

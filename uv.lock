@@ -564,7 +564,7 @@ wheels = [
 ]
 
 [[package]]
-name = "globex-agent"
+name = "sourcepilot"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

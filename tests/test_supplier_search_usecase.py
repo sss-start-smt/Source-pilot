@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Day 3 deterministic supplier hard-constraint and reranking tests."""
 from app.application.usecases.supplier_search import SupplierSearchUseCase
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, Reranker
+from app.domain.supplier.ports.retrieval_ports import EmbeddingClient, Reranker
 from app.domain.supplier.ports.retrieval_ports import SupplierVectorHit, SupplierVectorIndex
 from app.domain.supplier.supplier_search_spec import SupplierSearchSpec
 from app.infrastructure.persistence.in_memory_repositories import InMemorySupplierRepository

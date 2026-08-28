@@ -10,7 +10,7 @@ import pytest
 
 pytest.importorskip("qdrant_client")
 
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient
+from app.domain.supplier.ports.retrieval_ports import EmbeddingClient
 from app.infrastructure.persistence.in_memory_repositories import InMemorySupplierRepository
 from app.infrastructure.settings import Settings
 from app.infrastructure.vector.index_bootstrap import bootstrap_supplier_index

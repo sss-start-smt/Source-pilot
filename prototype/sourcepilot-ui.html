@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>寻策 SourcePilot｜静态产品原型</title>
+  <style>
+    :root{--ink:#18212f;--muted:#667085;--line:#e5e9f0;--bg:#f5f7fa;--card:#fff;--brand:#176b5b;--soft:#eaf5f2;--warn:#a15c00;--danger:#b42318;--shadow:0 12px 32px rgba(20,31,49,.08)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+    button,textarea{font:inherit} .shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+    aside{background:#13231f;color:#e8f3f0;padding:26px 20px}.brand{font-size:21px;font-weight:750;letter-spacing:.2px}.brand small{display:block;color:#94b8ae;font-size:11px;font-weight:500;margin-top:3px}
+    nav{margin-top:28px;display:grid;gap:7px}.nav{padding:10px 12px;border-radius:8px;color:#aac4bd}.nav.active{background:#24433b;color:white}.side-note{margin-top:32px;padding:12px;border:1px solid #31544a;border-radius:9px;color:#a8c7bf;font-size:12px}
+    main{padding:24px 28px 40px;max-width:1450px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:20px;align-items:center}.top h1{font-size:24px;margin:0}.top p{margin:3px 0 0;color:var(--muted)}
+    .status{display:flex;gap:8px;align-items:center;color:#35665b;background:var(--soft);padding:7px 11px;border-radius:999px;font-size:12px}.dot{width:7px;height:7px;border-radius:50%;background:#1c9a75}
+    .workspace{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.8fr);gap:18px;margin-top:20px}.stack{display:grid;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:18px}.card h2{font-size:15px;margin:0 0 13px}.label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    textarea{width:100%;min-height:92px;border:1px solid #cfd6df;border-radius:9px;padding:12px;resize:vertical;color:var(--ink);outline:none}textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(23,107,91,.11)}
+    .actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.hint{color:var(--muted);font-size:12px}.primary{border:0;border-radius:8px;background:var(--brand);color:white;padding:9px 15px;cursor:pointer}.primary:hover{filter:brightness(.96)}
+    .chips{display:flex;flex-wrap:wrap;gap:7px}.chip{background:#f2f4f7;border:1px solid #e3e7ec;border-radius:999px;padding:5px 9px;font-size:12px}.chip.ok{background:#eaf8f3;color:#087451;border-color:#c5eadc}.chip.warn{background:#fff6e8;color:var(--warn);border-color:#f3d7a9}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.field{background:#f8fafb;border:1px solid #e7ebef;border-radius:8px;padding:10px}.field b{display:block;font-size:12px;color:#5c6675;margin-bottom:3px}.field span{font-weight:650}
+    table{width:100%;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid #edf0f3;padding:10px 8px;vertical-align:top}th{color:#667085;font-size:11px;text-transform:uppercase;letter-spacing:.4px}.rank{font-weight:750;color:var(--brand)}.score{font-weight:750}.tag{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;background:#eaf8f3;color:#087451}.risk{color:var(--warn);font-size:12px}.unknown{color:var(--danger);font-size:12px}
+    .metric{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #edf0f3}.metric:last-child{border:0}.metric strong{font-size:15px}.timeline{display:grid;gap:11px}.event{display:grid;grid-template-columns:12px 1fr;gap:9px}.event i{width:9px;height:9px;border:2px solid var(--brand);border-radius:50%;margin-top:5px}.event b{display:block;font-size:12px}.event span{color:var(--muted);font-size:12px}.notice{background:#fff9ec;border:1px solid #f1ddb0;color:#7a5000;padding:10px;border-radius:8px;font-size:12px}
+    footer{margin-top:18px;color:#7b8492;font-size:11px;text-align:center}@media(max-width:980px){.shell{grid-template-columns:1fr}aside{display:none}.workspace{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}main{padding:18px}}@media(max-width:600px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.status{display:none}.card{padding:14px}th:nth-child(4),td:nth-child(4){display:none}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">寻策 SourcePilot<small>AI Sourcing & Supplier Decision Copilot</small></div>
+      <nav>
+        <div class="nav active">采购工作台</div><div class="nav">RFQ 任务</div><div class="nav">供应商候选</div><div class="nav">报价比较</div><div class="nav">评测与审计</div>
+      </nav>
+      <div class="side-note">当前原型只生成有证据的 Shortlist，不自动发送询价、议价或定标。</div>
+    </aside>
+    <main>
+      <header class="top"><div><h1>采购决策工作台</h1><p>从非结构化需求到 Qualified Shortlist</p></div><div class="status"><span class="dot"></span>确定性护栏已启用</div></header>
+      <section class="workspace">
+        <div class="stack">
+          <article class="card">
+            <h2>输入采购需求</h2>
+            <div class="label">自然语言 RFQ</div>
+            <textarea id="rfq">找 5000 个 750ml 304 不锈钢保温杯，要做激光 Logo，需要 LFGB，FOB 单价最好不超过 4 美元，30 天内出货。</textarea>
+            <div class="actions"><span class="hint">数字与认证不会由模型补猜</span><button class="primary" id="analyze">解析并开始寻源</button></div>
+          </article>
+          <article class="card">
+            <h2>结构化 RFQ</h2>
+            <div class="grid">
+              <div class="field"><b>Product</b><span>Vacuum Flask</span></div><div class="field"><b>Quantity</b><span>5,000 pcs</span></div><div class="field"><b>Target Price</b><span>≤ 4.00 USD</span></div>
+              <div class="field"><b>Certification</b><span>LFGB</span></div><div class="field"><b>Lead Time</b><span>≤ 30 days</span></div><div class="field"><b>Customization</b><span>Laser Logo</span></div>
+            </div>
+            <div class="chips" style="margin-top:12px"><span class="chip ok">必填字段完整</span><span class="chip">304 stainless steel</span><span class="chip">750ml</span><span class="chip">FOB</span></div>
+          </article>
+          <article class="card">
+            <h2>Qualified Shortlist</h2>
+            <table>
+              <thead><tr><th>Rank</th><th>Supplier</th><th>Effective Cost</th><th>Lead Time</th><th>Decision Evidence</th></tr></thead>
+              <tbody>
+                <tr><td class="rank">#1</td><td><b>SUP-VF-011</b><br><span class="tag">Qualified</span></td><td class="score">$3.93</td><td>22–26 days</td><td>LFGB；MOQ 满足<br><span class="risk">核验包装费有效期</span></td></tr>
+                <tr><td class="rank">#2</td><td><b>SUP-VF-021</b><br><span class="tag">Qualified</span></td><td class="score">$3.85</td><td>20–24 days</td><td>成本最低；交期较短<br><span class="unknown">工厂审计状态 unknown</span></td></tr>
+                <tr><td class="rank">#3</td><td><b>SUP-VF-001</b><br><span class="tag">Qualified</span></td><td class="score">$3.97</td><td>25 days</td><td>资料完整；LFGB<br><span class="risk">固定费较高</span></td></tr>
+              </tbody>
+            </table>
+            <div class="notice" style="margin-top:12px">以上为合成 mvp_seed 数据。所有候选均需采购人员核验后才能进入真实询价流程。</div>
+          </article>
+        </div>
+        <div class="stack">
+          <article class="card"><h2>本轮状态</h2><div class="metric"><span>召回供应商</span><strong>40</strong></div><div class="metric"><span>Hard Gate 通过</span><strong>6</strong></div><div class="metric"><span>过滤候选</span><strong>34</strong></div><div class="metric"><span>人工确认项</span><strong>3</strong></div></article>
+          <article class="card"><h2>过滤原因</h2><div class="chips"><span class="chip warn">MOQ 过高 · 12</span><span class="chip warn">缺少 LFGB · 10</span><span class="chip warn">价格超限 · 7</span><span class="chip warn">交期过长 · 5</span></div></article>
+          <article class="card"><h2>决策链</h2><div class="timeline"><div class="event"><i></i><div><b>Procurement Supervisor</b><span>完成 RFQ 解析与任务规划</span></div></div><div class="event"><i></i><div><b>Sourcing Agent</b><span>召回并执行 Hard Gate</span></div></div><div class="event"><i></i><div><b>Quote Agent</b><span>归一报价并复算成本</span></div></div><div class="event"><i></i><div><b>Human Review</b><span>等待采购人员确认或调整</span></div></div></div></article>
+        </div>
+      </section>
+      <footer>SourcePilot Portfolio Edition · Static UI Prototype · Synthetic Data Only</footer>
+    </main>
+  </div>
+  <script>
+    document.getElementById('analyze').addEventListener('click',function(){this.textContent='已完成解析与寻源';this.style.background='#087451';});
+  </script>
+</body>
+</html>

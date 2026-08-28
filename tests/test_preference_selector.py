@@ -7,7 +7,7 @@
 """
 from app.application.memory.preference_selector import PreferenceSelector
 from app.domain.buyer.preference import BuyerPreference
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient
+from app.domain.supplier.ports.retrieval_ports import EmbeddingClient
 
 _TERMS = ("咖啡", "杯", "旅行", "箱", "塑料", "设计", "露营")
 

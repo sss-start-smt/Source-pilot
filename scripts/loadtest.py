@@ -15,15 +15,15 @@ import time
 
 import httpx
 
-# 混合负载：检索型（只读、快）与交易型（含确认、慢）按 8:2 取样
+# 混合负载：单品类寻源与多约束报价比较。
 SEARCH_QUERIES = [
-    "预算300元，抗造又不塑料的旅行三件套",
-    "找几个适合长途飞行的颈枕，要小众设计",
-    "登机箱，铝框、静音轮，1000 以内",
+    "找 5000 个 750ml 304 不锈钢保温杯，需要 LFGB 和激光 Logo，FOB 4 美元以内",
+    "找 2000 个尼龙背包，需要 REACH、luggage strap 和 custom logo",
+    "找 3000 个 USB-C PD 3.0 电子配件，需要 CE、RoHS 和 custom firmware",
 ]
 TRADE_QUERIES = [
-    "刚才那个军绿色的收纳套，帮我下单一件寄到美国",
-    "查一下我上一笔订单到哪了",
+    "比较刚才三家供应商的报价，缺失字段标记为 unknown，不要猜测",
+    "把当前候选的风险、成本口径和需人工确认项整理成 shortlist",
 ]
 
 
@@ -40,7 +40,7 @@ async def _one_intent(client: httpx.AsyncClient, i: int) -> tuple[bool, float]:
     }
     started = time.monotonic()
     try:
-        resp = await client.post("/commerce/intents", json=payload)
+        resp = await client.post("/procurement/intents", json=payload)
         ok = resp.status_code == 200
     except (httpx.HTTPError, asyncio.TimeoutError):
         ok = False

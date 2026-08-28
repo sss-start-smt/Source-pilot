@@ -2,19 +2,19 @@
 """长期记忆写/撤回两个工具的单测。
 
 两条纪律必须钉死：
-    1. buyer_id 只能来自 ShoppingContext，绝不能让模型入参决定改谁的记忆；
+    1. buyer_id 只能来自 ProcurementContext，绝不能让模型入参决定改谁的记忆；
     2. 撤回未命中时不能假装成功——要把现存偏好回给模型让它用原文重试，
        否则模型会告诉买家"已经帮你撤回了"，而记忆里那条还在。
 """
 from app.application.tools.forget_preference_tool import build_forget_preference_tool
 from app.application.tools.remember_preference_tool import build_remember_preference_tool
 from app.domain.buyer.preference import BuyerPreference
-from app.infrastructure.context import ShoppingContext, ShoppingContextSnapshot
+from app.infrastructure.context import ProcurementContext, ProcurementContextSnapshot
 from app.infrastructure.eventbus import TradeEventBus
 from app.infrastructure.persistence.json_file_stores import JsonFilePreferenceStore
 
-SNAPSHOT = ShoppingContextSnapshot(
-    shopping_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
+SNAPSHOT = ProcurementContextSnapshot(
+    procurement_session_id="s1", buyer_id="buyer-001", locale="zh-CN", currency="CNY",
 )
 
 
@@ -32,11 +32,11 @@ class TestForgetPreferenceTool:
         )
         tool = build_forget_preference_tool(store, TradeEventBus())
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             chunk = await tool(statement="不要塑料材质")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert "已撤回" in _text(chunk)
         assert await store.list_by_buyer("buyer-001") == []
@@ -49,11 +49,11 @@ class TestForgetPreferenceTool:
         )
         tool = build_forget_preference_tool(store, TradeEventBus())
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             chunk = await tool(statement="不要塑料")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         text = _text(chunk)
         assert "未找到" in text
@@ -64,11 +64,11 @@ class TestForgetPreferenceTool:
         store = JsonFilePreferenceStore(tmp_path)
         tool = build_forget_preference_tool(store, TradeEventBus())
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             chunk = await tool(statement="不要塑料材质")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert "没有任何长期偏好" in _text(chunk)
 
@@ -80,11 +80,11 @@ class TestForgetPreferenceTool:
         )
         tool = build_forget_preference_tool(store, TradeEventBus())
 
-        token = ShoppingContext.set(SNAPSHOT)  # 当前买家是 buyer-001
+        token = ProcurementContext.set(SNAPSHOT)  # 当前买家是 buyer-001
         try:
             chunk = await tool(statement="不要塑料材质")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert "未找到" in _text(chunk)
         assert len(await store.list_by_buyer("buyer-999")) == 1, "不得删到别人的记忆"
@@ -96,11 +96,11 @@ class TestForgetPreferenceTool:
 
         tool = build_forget_preference_tool(BrokenStore(tmp_path), TradeEventBus())
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             chunk = await tool(statement="不要塑料材质")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert "[error]" in _text(chunk), "写失败必须如实报错，不能假装撤回成功"
 
@@ -112,7 +112,7 @@ class TestRememberForgetRoundTrip:
         remember = build_remember_preference_tool(store, bus)
         forget = build_forget_preference_tool(store, bus)
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             await remember(kind="dislike", statement="不要塑料材质")
             assert len(await store.list_by_buyer("buyer-001")) == 1
@@ -120,7 +120,7 @@ class TestRememberForgetRoundTrip:
             await forget(statement="不要塑料材质")
             assert await store.list_by_buyer("buyer-001") == []
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
     async def test_forget_then_remember_again(self, tmp_path):
         """买家撤回后又改主意，应能重新记住。"""
@@ -129,12 +129,12 @@ class TestRememberForgetRoundTrip:
         remember = build_remember_preference_tool(store, bus)
         forget = build_forget_preference_tool(store, bus)
 
-        token = ShoppingContext.set(SNAPSHOT)
+        token = ProcurementContext.set(SNAPSHOT)
         try:
             await remember(kind="dislike", statement="不要塑料材质")
             await forget(statement="不要塑料材质")
             await remember(kind="dislike", statement="不要塑料材质")
         finally:
-            ShoppingContext.reset(token)
+            ProcurementContext.reset(token)
 
         assert len(await store.list_by_buyer("buyer-001")) == 1

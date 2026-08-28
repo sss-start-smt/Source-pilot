@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Day 2 raw supplier retrieval use-case tests without external services."""
 from app.application.usecases.supplier_retrieval import SupplierRetrievalUseCase
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient
+from app.domain.supplier.ports.retrieval_ports import EmbeddingClient
 from app.domain.supplier.ports.retrieval_ports import SupplierVectorHit, SupplierVectorIndex
 from app.infrastructure.persistence.in_memory_repositories import InMemorySupplierRepository
 

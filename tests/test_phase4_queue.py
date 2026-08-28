@@ -90,7 +90,7 @@ class FakeStreamClient:
 def _task(task_id: str = "task-1") -> IntentTask:
     return IntentTask(
         task_id=task_id,
-        shopping_session_id="s1",
+        procurement_session_id="s1",
         buyer_id="b1",
         locale="zh-CN",
         currency="CNY",
@@ -200,7 +200,7 @@ class TestEventBackplane:
         bus = TradeEventBus()
         bus.attach_backplane(RedisEventBackplane(client))
 
-        bus.publish("s1", "tool.invoke", {"tool": "product_search_tool"})
+        bus.publish("s1", "tool.invoke", {"tool": "supplier_search_tool"})
         await asyncio.sleep(0)  # 让 fire-and-forget 广播任务跑一轮
         await asyncio.sleep(0)
 
@@ -219,7 +219,7 @@ class TestEventBackplane:
         client = FakeStreamClient()
         backplane = RedisEventBackplane(client, origin="api-1")
         event = TradeEvent(
-            shopping_session_id="s1", type="task.queued", payload={"task_id": "t1"},
+            procurement_session_id="s1", type="task.queued", payload={"task_id": "t1"},
             occurred_at="2026-01-01T00:00:00Z",
         )
         await backplane.publish(event)
@@ -248,7 +248,7 @@ class TestEventBackplane:
         queue = bus.subscribe("s1")
 
         bus.deliver_local(
-            TradeEvent(shopping_session_id="s1", type="token.delta", payload={"token": "露"},
+            TradeEvent(procurement_session_id="s1", type="token.delta", payload={"token": "露"},
                        occurred_at="2026-01-01T00:00:00Z"),
         )
         await asyncio.sleep(0)
@@ -267,9 +267,9 @@ class TestEventBackplane:
 class TestEventSerialization:
     async def test_roundtrip_preserves_fields(self):
         event = TradeEvent(
-            shopping_session_id="s1",
+            procurement_session_id="s1",
             type="tool.result",
-            payload={"tool": "product_search_tool", "hit_count": 5},
+            payload={"tool": "supplier_search_tool", "hit_count": 5},
             occurred_at="2026-01-01T00:00:00Z",
         )
         restored = TradeEvent.from_dict(json.loads(json.dumps(event.to_dict())))

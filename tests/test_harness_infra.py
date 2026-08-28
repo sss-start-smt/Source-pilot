@@ -52,13 +52,13 @@ class TestSharedCircuitBreaker:
         a = SharedCircuitBreakerRegistry(cache, failure_threshold=2, reset_seconds=60)
         b = SharedCircuitBreakerRegistry(cache, failure_threshold=2, reset_seconds=60)
 
-        await a.record_failure_async("product_search_tool")
-        await a.record_failure_async("product_search_tool")
+        await a.record_failure_async("supplier_search_tool")
+        await a.record_failure_async("supplier_search_tool")
 
-        assert await a.status_async("product_search_tool") == "open"
+        assert await a.status_async("supplier_search_tool") == "open"
         # 另一个"副本"共享同一份状态：这正是本模块存在的意义
-        assert await b.status_async("product_search_tool") == "open"
-        assert await b.allow_async("product_search_tool") is False
+        assert await b.status_async("supplier_search_tool") == "open"
+        assert await b.allow_async("supplier_search_tool") is False
 
     async def test_success_clears_state(self):
         cache = FakeCache()
@@ -123,7 +123,7 @@ class FakeRedisClient:
 def _task(priority: int) -> IntentTask:
     return IntentTask(
         task_id="t1",
-        shopping_session_id="s1",
+        procurement_session_id="s1",
         buyer_id="b1",
         locale="zh-CN",
         currency="CNY",
@@ -154,7 +154,7 @@ class TestQueuePriorityRouting:
         """老消息没有 priority 字段，反序列化不能炸。"""
         legacy = {
             "task_id": "t1",
-            "shopping_session_id": "s1",
+            "procurement_session_id": "s1",
             "buyer_id": "b1",
             "locale": "zh-CN",
             "currency": "CNY",

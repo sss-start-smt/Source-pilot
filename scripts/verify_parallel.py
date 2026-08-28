@@ -23,23 +23,22 @@ import httpx
 import websockets
 
 BASE_URL = "http://127.0.0.1:8000"
-WS_URL = "ws://127.0.0.1:8000/commerce/events"
+WS_URL = "ws://127.0.0.1:8000/procurement/events"
 
 PARALLEL_QUERY = (
-    "我下个月去高原露营，请分头调研三类装备：露营照明、登山杖、速干毛巾。"
-    "三件事彼此独立，请一次性并行派三个检索子代理去做，最后汇总推荐。"
+    "请同时处理三类采购：不锈钢保温杯、尼龙背包、USB-C 电子配件。"
+    "三项 RFQ 彼此独立，请并行派发 Sourcing Agent，最后汇总 qualified shortlist。"
 )
 SERIAL_QUERY = (
-    "我下个月去高原露营，请调研三类装备：露营照明、登山杖、速干毛巾。"
-    "请严格一个一个来：先把露营照明彻底做完，再做登山杖，最后做速干毛巾，"
-    "每次只派一个检索子代理，不要同时派多个。"
+    "请处理三类采购：不锈钢保温杯、尼龙背包、USB-C 电子配件。"
+    "请严格一个一个来，每次只派一个 Sourcing Agent，不要同时派多个。"
 )
 
 
 async def collect_events(session_id: str, stop: asyncio.Event) -> list[dict]:
     events: list[dict] = []
     async with websockets.connect(WS_URL) as ws:
-        await ws.send(json.dumps({"shopping_session_id": session_id}))
+        await ws.send(json.dumps({"procurement_session_id": session_id}))
         while not stop.is_set():
             try:
                 raw = await asyncio.wait_for(ws.recv(), timeout=1)
@@ -83,9 +82,9 @@ async def run_round(label: str, query: str) -> dict:
     started = time.monotonic()
     async with httpx.AsyncClient(timeout=900) as client:
         response = await client.post(
-            f"{BASE_URL}/commerce/intents",
+            f"{BASE_URL}/procurement/intents",
             json={
-                "shopping_session_id": session_id,
+                "procurement_session_id": session_id,
                 "buyer_id": f"parallel-buyer-{label}",
                 "locale": "zh-CN",
                 "currency": "CNY",

@@ -3,11 +3,9 @@
 
 起因是一个真实事故：内部 embedding 网关在单批超过 10 条时返回
 **HTTP 200 + 空 body**，`raise_for_status()` 放行，最终在 `.json()` 处抛
-`JSONDecodeError`，报错完全指不到真因；而 `bootstrap_product_index` 会吞掉异常
-降级关键词召回，于是线上表现为「向量检索静默失效」。
+`JSONDecodeError`，报错完全指不到真因；召回链路降级后表现为「向量检索静默失效」。
 
-商品种子库原本恰好 10 个 SPU（正好卡在上限内），所以问题一直没暴露，
-直到为召回评测把商品库扩到 60 个才被发现。这几条用例把它钉死。
+小规模合成供应商集原本正好卡在上限内，直到扩大召回评测集才被发现。
 """
 from types import SimpleNamespace
 
@@ -65,7 +63,7 @@ class TestBatchChunking:
         assert seen == [10] * 6, "每批不得超过网关上限"
 
     async def test_preserves_global_order_across_chunks(self, monkeypatch):
-        """跨分片的顺序必须与入参一致，否则商品和向量会错配。"""
+        """跨分片顺序必须与入参一致，否则供应商与向量会错配。"""
         monkeypatch.setattr(mod, "_MAX_BATCH", 3)
 
         def handler(request: httpx.Request) -> httpx.Response:

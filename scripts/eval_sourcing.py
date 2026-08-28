@@ -154,7 +154,7 @@ def evaluate_rfq() -> dict[str, Any]:
         },
         "exact_case_accuracy_by_type": {k: round(safe_rate(v[0], v[1]), 4) for k, v in sorted(per_type.items())},
         "sample_failures": failures,
-        "parser_strategy": "dependency-free regex fallback; production path remains LLM structured extraction + validation",
+        "parser_strategy": "无依赖 regex 降级方案；生产路径仍为 LLM 结构化抽取 + 校验",
     }
 
 
@@ -207,7 +207,7 @@ def evaluate_quotation() -> dict[str, Any]:
         "cost_calculation_accuracy": round(safe_rate(cost_correct, cost_cases), 4),
         "cost_calculation_case_count": cost_cases,
         "sample_failures": failures,
-        "parser_strategy": "conservative regex fallback for offline eval; unknown fields remain null",
+        "parser_strategy": "面向离线评测的保守 regex 降级方案；未知字段保持 null",
     }
 
 
@@ -285,7 +285,7 @@ async def evaluate_supplier_search(repo: InMemorySupplierRepository) -> dict[str
             "p50": round(percentile(latencies, .5) or 0, 3), "p95": round(percentile(latencies, .95) or 0, 3),
             "mean": round(statistics.fmean(latencies), 3),
         },
-        "strategy": "keyword_2gram fallback (embedding/reranker unavailable in current sandbox)",
+        "strategy": "keyword_2gram 降级（当前沙箱无法使用 embedding/reranker）",
         "annotation_note": "relevant supplier order is synthetic rubric-derived, not human supplier judgment",
         "per_case": per_case,
     }
@@ -350,52 +350,52 @@ async def evaluate_decision(repo: InMemorySupplierRepository) -> dict[str, Any]:
 def render_report(report: dict[str, Any]) -> str:
     r=report["rfq"]; q=report["quotation"]; s=report["supplier_search"]; d=report["decision"]
     lines=[
-        "# B2B Sourcing Offline Evaluation Report", "",
-        "> Scope: dependency-light offline benchmark over synthetic `mvp_seed` suppliers and synthetic gold cases. "
-        "These are reproducible engineering/product-evaluation results, not production-user metrics.", "",
-        "## Executive summary", "",
-        "| Metric | Result | Evidence boundary |", "|---|---:|---|",
-        f"| RFQ schema valid rate | {r['schema_valid_rate']:.1%} | 50 offline RFQ cases |",
-        f"| RFQ micro field accuracy | {r['micro_field_accuracy']:.1%} | regex fallback, not live LLM extraction |",
-        f"| Critical constraint recall | {r['critical_constraint_recall']:.1%} | explicit product/qty/price/cert/lead labels |",
-        f"| Quotation micro field accuracy | {q['micro_field_accuracy']:.1%} | {q['case_count']} mixed-format quote cases |",
-        f"| Cost calculation accuracy | {q['cost_calculation_accuracy']:.1%} | {q['cost_calculation_case_count']} fully specified cost cases |",
-        f"| Supplier Recall@10 | {s['recall_at_10']:.1%} | keyword fallback in current sandbox |",
-        f"| Supplier Recall@20 | {s['recall_at_20']:.1%} | keyword fallback in current sandbox |",
-        f"| NDCG@10 | {s['ndcg_at_10']:.3f} | synthetic relevance order |",
-        f"| Hard constraint satisfaction | {s['hard_constraint_satisfaction_rate']:.1%} | independent rule recheck on returned hits |",
-        f"| Top-3 membership agreement | {d['top3_membership_agreement']:.1%} | independent synthetic decision rubric |",
-        f"| Ranking pairwise agreement | {d['ranking_pairwise_agreement']:.1%} | independent synthetic decision rubric |",
-        f"| Offline task completion | {d['offline_task_completion_rate']:.1%} | decision use case, not live AgentScope |",
-        "", "## RFQ extraction", "",
-        f"Cases: {r['case_count']}; parser strategy: {r['parser_strategy']}.", "",
-        "| Field | Accuracy |", "|---|---:|",
+        "# B2B 寻源离线评测报告", "",
+        "> 范围：基于合成 `mvp_seed` 供应商与合成 gold case 的轻依赖离线 benchmark。"
+        "这些是可复现的工程 / 产品评测结果，不是生产用户指标。", "",
+        "## 结果摘要", "",
+        "| 指标 | 结果 | 证据边界 |", "|---|---:|---|",
+        f"| RFQ Schema 合法率 | {r['schema_valid_rate']:.1%} | 50 条离线 RFQ case |",
+        f"| RFQ 微观字段准确率 | {r['micro_field_accuracy']:.1%} | regex 降级方案，非 live LLM 抽取 |",
+        f"| 关键约束召回率 | {r['critical_constraint_recall']:.1%} | 显式 product/qty/price/cert/lead 标签 |",
+        f"| 报价微观字段准确率 | {q['micro_field_accuracy']:.1%} | {q['case_count']} 条混合格式报价 case |",
+        f"| 成本计算准确率 | {q['cost_calculation_accuracy']:.1%} | {q['cost_calculation_case_count']} 条字段完整的成本 case |",
+        f"| 供应商 Recall@10 | {s['recall_at_10']:.1%} | 当前沙箱 keyword 降级 |",
+        f"| 供应商 Recall@20 | {s['recall_at_20']:.1%} | 当前沙箱 keyword 降级 |",
+        f"| NDCG@10 | {s['ndcg_at_10']:.3f} | 合成相关性排序 |",
+        f"| 硬约束满足率 | {s['hard_constraint_satisfaction_rate']:.1%} | 对返回 hits 的独立规则复核 |",
+        f"| Top-3 成员一致率 | {d['top3_membership_agreement']:.1%} | 独立合成决策 rubric |",
+        f"| 成对排序一致率 | {d['ranking_pairwise_agreement']:.1%} | 独立合成决策 rubric |",
+        f"| 离线任务完成率 | {d['offline_task_completion_rate']:.1%} | 决策 use case，非 live AgentScope |",
+        "", "## RFQ 抽取", "",
+        f"Case 数：{r['case_count']}；解析器策略：{r['parser_strategy']}。", "",
+        "| 字段 | 准确率 |", "|---|---:|",
     ]
     for field,val in r['field_accuracy'].items(): lines.append(f"| {field} | {val:.1%} |")
-    lines += ["", f"Conflict detection: precision {r['conflict_detection']['precision']:.1%}, recall {r['conflict_detection']['recall']:.1%}, F1 {r['conflict_detection']['f1']:.1%}.", "",
-              "Exact-case accuracy by case type: " + ", ".join(f"{k}={v:.1%}" for k,v in r['exact_case_accuracy_by_type'].items()) + ".", "",
-              "## Quotation extraction", "", f"Cases: {q['case_count']}; {q['parser_strategy']}.", "", "| Field | Accuracy |", "|---|---:|"]
+    lines += ["", f"冲突检测：precision {r['conflict_detection']['precision']:.1%}，recall {r['conflict_detection']['recall']:.1%}，F1 {r['conflict_detection']['f1']:.1%}。", "",
+              "按 case 类型的精确一致率：" + "，".join(f"{k}={v:.1%}" for k,v in r['exact_case_accuracy_by_type'].items()) + "。", "",
+              "## 报价抽取", "", f"Case 数：{q['case_count']}；{q['parser_strategy']}。", "", "| 字段 | 准确率 |", "|---|---:|"]
     for field,val in q['field_accuracy'].items(): lines.append(f"| {field} | {val:.1%} |")
-    lines += ["", "## Supplier retrieval and hard constraints", "",
-              f"Current runtime strategy: `{s['strategy']}`. Retrieval latency P50={s['latency_ms']['p50']} ms, P95={s['latency_ms']['p95']} ms. "
-              "This latency excludes network embedding/reranking because those dependencies are unavailable here.", "",
-              f"Qualified-count exact agreement: {s['qualified_count_exact_rate']:.1%}. Surfaced filter-reason exact agreement: {s['surfaced_filter_reason_exact_rate']:.1%}.", "",
-              "The hard-constraint satisfaction rate is the safety-critical metric: every returned hit is rechecked independently against MOQ, price/currency, certifications, lead time and customization.", "",
-              "## Error taxonomy", "",
-              "- **RFQ unlabeled deadline:** standalone phrases such as `30 days` without `lead time/交期/以内` are intentionally not always interpreted as delivery constraints by the conservative fallback.",
-              "- **RFQ revisions/conflicts:** phrases such as `3000 pcs; actually 5000 pcs` can change which value is selected even when a conflict is detected. Conflict recall is therefore reported separately.",
-              "- **Quote non-point prices:** ranges (`USD 3.60-3.90`) and approximate prices (`approx. $3.70`) can be over-eagerly collapsed to a point by the regex fallback.",
-              "- **Quote locale/unit normalization:** decimal comma (`3,65`), `per 100 pcs`, and week-based lead times are adversarial gaps in the fallback parser.",
-              "- **Ranking preference mismatch:** Top-3 membership is stronger than pairwise order agreement, showing that shortlist qualification is more stable than exact soft-rank ordering.", "",
-              "## Procurement decision", "",
-              f"10 decision cases were compared with a deliberately different synthetic gold rubric. System Top-3 membership agreement={d['top3_membership_agreement']:.1%}; pairwise order agreement={d['ranking_pairwise_agreement']:.1%}. "
-              "This measures ranking behavior against a benchmark rubric, not buyer preference or production acceptance.", "",
-              "## Metrics not claimed", "",
-              "- **Live Agent Task Completion / Tool Success / Average Tool Calls / Token Cost:** not measured because AgentScope/LLM runtime dependencies are unavailable in this sandbox.",
-              "- **Manual TTQS:** not measured because no human participant has performed and timed the 10-task manual baseline. No synthetic timing is substituted.",
-              "- **Production ROI:** not measured. `docs/roi-benchmark.md` only contains scenario-based Projected ROI formulas and assumptions.", "",
-              "## Reproduce", "", "```bash", "python scripts/eval_sourcing.py", "```", "",
-              "Input datasets: `eval/rfq_cases.jsonl`, `eval/quotation_cases.jsonl`, `eval/supplier_recall.jsonl`, `eval/decision_cases.jsonl`.", ""]
+    lines += ["", "## 供应商召回与硬约束", "",
+              f"当前运行策略：`{s['strategy']}`。检索延迟 P50={s['latency_ms']['p50']} ms，P95={s['latency_ms']['p95']} ms。"
+              "该延迟不含网络 embedding/rerank，因为这些依赖在当前环境不可用。", "",
+              f"合格数量精确一致率：{s['qualified_count_exact_rate']:.1%}。暴露过滤原因精确一致率：{s['surfaced_filter_reason_exact_rate']:.1%}。", "",
+              "硬约束满足率是安全关键指标：每一条返回 hit 都被独立规则按 MOQ、价格/币种、认证、交期与定制重新核验。", "",
+              "## 错误分类", "",
+              "- **RFQ 无标签交期：**保守降级方案有意不把 `30 days` 这类没有 `lead time/交期/以内` 标签的孤立短语全部解释为交期约束。",
+              "- **RFQ revision/冲突：**`3000 pcs; actually 5000 pcs` 这类措辞即使检测到冲突，也可能选中修订后的值。因此冲突召回单独上报。",
+              "- **报价非点价：**区间价（`USD 3.60-3.90`）与近似价（`approx. $3.70`）可能被 regex 降级方案过早压缩成点价。",
+              "- **报价本地化/单位归一：**小数逗号（`3,65`）、`per 100 pcs`、按周计交期是降级解析器的对抗性缺口。",
+              "- **排序偏好不匹配：**Top-3 成员一致性强于成对排序一致率，说明 shortlist 资格判断比精确软排序更稳定。", "",
+              "## 采购决策", "",
+              f"10 条决策 case 与一套刻意不同的合成 gold rubric 对比。系统 Top-3 成员一致率={d['top3_membership_agreement']:.1%}；成对排序一致率={d['ranking_pairwise_agreement']:.1%}。"
+              "这度量的是排序行为相对 benchmark rubric 的一致性，不是买家偏好或生产接受度。", "",
+              "## 不宣称的指标", "",
+              "- **Live Agent 任务完成率 / 工具成功率 / 平均工具调用次数 / token 成本：**未测量，因为当前沙箱缺少 AgentScope/LLM 运行时依赖。",
+              "- **Manual TTQS：**未测量，因为尚无真人参与者执行并计时 10 任务人工基线。没有用合成计时值替代。",
+              "- **生产 ROI：**未测量。`docs/roi-benchmark.md` 只包含基于场景的预测性 ROI 公式与假设。", "",
+              "## 复现方式", "", "```bash", "python scripts/eval_sourcing.py", "```", "",
+              "输入数据集：`eval/rfq_cases.jsonl`、`eval/quotation_cases.jsonl`、`eval/supplier_recall.jsonl`、`eval/decision_cases.jsonl`。", ""]
     return "\n".join(lines)
 
 

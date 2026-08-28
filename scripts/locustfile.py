@@ -17,12 +17,12 @@ class SyncIntentUser(HttpUser):
     def submit_intent(self) -> None:
         payload = {
             "buyer_id": f"locust-{uuid.uuid4().hex[:8]}",
-            "raw_query": "预算300元，抗造又不塑料的旅行三件套",
+            "raw_query": "找 5000 个 750ml 304 不锈钢保温杯，需要 LFGB 和激光 Logo",
             "locale": "zh-CN",
             "currency": "CNY",
         }
         # name 聚合统计，避免不同 query 被拆成多条曲线
-        self.client.post("/commerce/intents", json=payload, name="POST /commerce/intents")
+        self.client.post("/procurement/intents", json=payload, name="POST /procurement/intents")
 
 
 class AsyncWsUser(HttpUser):
@@ -34,22 +34,22 @@ class AsyncWsUser(HttpUser):
         session_id = f"locust-{uuid.uuid4().hex[:8]}"
         payload = {
             "buyer_id": session_id,
-            "raw_query": "找几个适合长途飞行的颈枕，要小众设计",
+            "raw_query": "找 2000 个尼龙背包，需要 REACH、luggage strap 和 custom logo",
             "locale": "zh-CN",
             "currency": "CNY",
-            "shopping_session_id": session_id,
+            "procurement_session_id": session_id,
         }
         started = time.monotonic()
-        with self.client.post("/commerce/intents/async", json=payload,
-                              name="POST /commerce/intents/async", catch_response=True) as resp:
+        with self.client.post("/procurement/intents/async", json=payload,
+                              name="POST /procurement/intents/async", catch_response=True) as resp:
             if resp.status_code != 200:
                 resp.failure(f"enqueue failed: {resp.status_code}")
                 return
 
-        ws_url = self.host.replace("http", "ws", 1) + "/commerce/events"
+        ws_url = self.host.replace("http", "ws", 1) + "/procurement/events"
         ws = websocket.create_connection(ws_url, timeout=120)
         try:
-            ws.send(json.dumps({"shopping_session_id": session_id}))  # 订阅协议见 connection.py
+            ws.send(json.dumps({"procurement_session_id": session_id}))  # 订阅协议见 connection.py
             while True:
                 event = json.loads(ws.recv())
                 if event.get("type") in ("final.result", "error"):

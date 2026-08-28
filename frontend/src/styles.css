@@ -20,6 +20,13 @@ header h1 {
   font-size: 20px;
 }
 
+.product-subtitle {
+  margin: -2px 0 8px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 header .meta {
   display: flex;
   gap: 14px;
